@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grain Guard</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to your CSS file -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- SweetAlert for alerts -->
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <h1>Grain Guard</h1>
+    </header>
+
+    <!-- Main Content Section -->
+    <main>
+        <h2>Welcome to Grain Guard</h2>
+        <p>Your reliable solution for grain storage management.</p>
+        <!-- Buttons for Silo Actions -->
+        <button id="button1" onclick="startCountdown('button1')">Open Silo</button>
+        <button id="button2" onclick="startCountdown('button2')">Close Silo</button>
+        <button id="button3" onclick="startCountdown('button3')">Secure Silo</button>
+    </main>
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="footer-container">
+            <div class="left-col">
+                <div class="logo">
+                    <h1>Grain Guard</h1>
+                </div>
+                <div class="social-media">
+                    <a href="#" aria-label="Facebook"><img src="https://cdn-icons-png.flaticon.com/128/174/174848.png" alt="Facebook Icon"></a>
+                    <a href="#" aria-label="Twitter"><img src="https://cdn-icons-png.flaticon.com/128/174/174883.png" alt="Twitter Icon"></a>
+                    <a href="#" aria-label="Instagram"><img src="https://cdn-icons-png.flaticon.com/128/11823/11823292.png" alt="Instagram Icon"></a>
+                    <a href="#" aria-label="LinkedIn"><img src="https://cdn-icons-png.flaticon.com/128/1384/1384063.png" alt="LinkedIn Icon"></a>
+                    <a href="#" aria-label="Pinterest"><img src="https://cdn-icons-png.flaticon.com/128/3536/3536505.png" alt="Pinterest Icon"></a>
+                </div><br><br>
+                <p class="rights-text">© 2024 Created By Brave Schemers All Rights Reserved.</p>
+                <p><b>Contact: </b>+91-0000-111-000<br><b>E-mail: </b>grainguard@gmail.com</p>
+            </div>
+            <div class="right-col">
+                <h1>Our Newsletter</h1>
+                <div class="border"></div>
+                <p>Enter Your Email to get our News and updates.</p>
+                <form class="newsletter-form" onsubmit="return validateEmail()">
+                    <input class="txtb" type="email" placeholder="Enter Your Email" required>
+                    <input class="btn" type="submit" value="Submit">
+                </form>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Section -->
+    <script>
+        let mins = 1.0;
+        let secs = mins * 60;
+        let countdownInterval;
+        let activeButtonId;
+
+        function startTimer() {
+            countdownInterval = setInterval(updateTimer, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(countdownInterval);
+        }
+
+        function updateTimer() {
+            if (secs <= 0) {
+                stopTimer();
+                switch (activeButtonId) {
+                    case 'button1':
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'The silo\'s door is now open',
+                            text: 'There may be rodents inside the silo. Urgent action is required.'
+                        });
+                        break;
+                    case 'button2':
+                    case 'button3':
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'The silo\'s door is now closed.',
+                            text: 'The grains are in a safe state!!!'
+                        });
+                        break;
+                    default:
+                        break;
+                }
+                return;
+            }
+            Swal.update({
+                title: 'Silo\'s Door Status',
+                text: `Time remaining: ${getFormattedTime()}`,
+            });
+            secs--;
+        }
+
+        function startCountdown(buttonId) {
+            mins = 1.0;
+            secs = mins * 60;
+            activeButtonId = buttonId;
+            startTimer();
+            Swal.fire({
+                icon: 'info',
+                title: 'Silo\'s Door Status',
+                text: `Time remaining: ${getFormattedTime()}`,
+                showConfirmButton: false,
+                didClose: () => {
+                    stopTimer();
+                }
+            });
+        }
+
+        function getFormattedTime() {
+            let minutes = Math.floor(secs / 60);
+            let seconds = secs % 60;
+            return `${minutes} minutes ${seconds} seconds`;
+        }
+
+        function validateEmail() {
+            const emailInput = document.querySelector('.newsletter-form .txtb');
+            const emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+            if (!emailInput.value.match(emailPattern)) {
+                alert('Please enter a valid email address.');
+                return false;
+            }
+            // Add your form submission logic here
+            alert('Thank you for subscribing to our newsletter!');
+            return true; // Proceed with form submission
+        }
+    </script>
+</body>
+</html>

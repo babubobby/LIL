@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--=============== REMIXICONS ===============-->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+
+    <!--=============== CSS ===============-->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+    <title>Heap</title>
+</head>
+<style>
+    /*=============== GOOGLE FONTS ===============*/
+    @import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;600&display=swap");
+
+    /*=============== VARIABLES CSS ===============*/
+    :root {
+        /*========== Colors ==========*/
+        --gradient-color-red: linear-gradient(90deg, hsl(7, 89%, 46%) 15%, hsl(11, 93%, 68%) 100%);
+        --gradient-color-orange: linear-gradient(90deg, hsl(22, 89%, 46%) 15%, hsl(54, 90%, 45%) 100%);
+        --gradient-color-yellow: linear-gradient(90deg, hsl(54, 89%, 46%) 15%, hsl(92, 90%, 45%) 100%);
+        --gradient-color-green: linear-gradient(90deg, hsl(92, 89%, 46%) 15%, hsl(92, 90%, 68%) 100%);
+        --text-color: #fff;
+        --body-color: hsl(190, 89%, 86%);
+        --container-color: hsl(180, 3%, 70%);
+
+        /*========== Font and typography ==========*/
+        --body-font: 'Rubik', sans-serif;
+        --biggest-font-size: 2.5rem;
+        --normal-font-size: .938rem;
+        --smaller-font-size: .75rem;
+    }
+
+    /* Responsive typography */
+    @media screen and (min-width: 968px) {
+        :root {
+            --biggest-font-size: 2.75rem;
+            --normal-font-size: 1rem;
+            --smaller-font-size: .813rem;
+        }
+    }
+
+    /*=============== BASE ===============*/
+    * {
+        box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+    }
+
+    body {
+        font-family: var(--body-font);
+        font-size: var(--normal-font-size);
+        background-color: var(--body-color);
+        color: var(--text-color);
+    }
+
+    /*=============== BATTERY ===============*/
+    .battery {
+        height: 100vh;
+        display: grid;
+        place-items: center;
+        margin: 0 1.5rem;
+    }
+
+    .battery__card {
+        position: relative;
+        width: 100%;
+        height: 240px;
+        background-color: var(--container-color);
+        padding: 1.5rem 2rem;
+        border-radius: 1.5rem;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        align-items: center;
+    }
+
+    .battery__text {
+        margin-bottom: .5rem;
+    }
+
+    .battery__percentage {
+        font-size: var(--biggest-font-size);
+    }
+
+    .battery__status {
+        position: absolute;
+        bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        column-gap: .5rem;
+        font-size: var(--smaller-font-size);
+    }
+
+    .battery__status i {
+        font-size: 1.25rem;
+    }
+
+    .battery__pill {
+        position: relative;
+        width: 75px;
+        height: 180px;
+        background-color: var(--container-color);
+        box-shadow: inset 20px 0 48px hsl(0, 0%, 16%),
+            inset -4px 12px 48px hsl(0, 0%, 56%);
+        border-radius: 3rem;
+        justify-self: flex-end;
+    }
+
+    .battery__level {
+        position: absolute;
+        inset: 2px;
+        border-radius: 3rem;
+        overflow: hidden;
+    }
+
+    .battery__liquid {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 36px;
+        background: var(--gradient-color-red);
+        box-shadow: inset -10px 0 12px hsla(0, 0%, 0%, .1),
+            inset 12px 0 12px hsla(0, 0%, 0%, .15);
+        transition: .3s;
+    }
+
+    .battery__liquid::after {
+        content: '';
+        position: absolute;
+        height: 8px;
+        background: var(--gradient-color-red);
+        box-shadow: inset 0px -3px 6px hsla(0, 0%, 0%, .2);
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+        top: -4px;
+        border-radius: 50%;
+    }
+
+    /* Full battery icon color */
+    .green-color {
+        background: var(--gradient-color-green);
+    }
+
+    /* Battery charging animation */
+    .animated-green {
+        background: var(--gradient-color-green);
+        animation: animated-charging-battery 1.2s infinite alternate;
+    }
+
+    /* Low battery animation */
+    .animated-red {
+        background: var(--gradient-color-red);
+        animation: animated-low-battery 1.2s infinite alternate;
+    }
+
+    .animated-green,
+    .animated-red,
+    .green-color {
+        color: transparent;
+    }
+
+    @keyframes animated-charging-battery {
+        0% {
+            text-shadow: none;
+        }
+        100% {
+            text-shadow: 0 0 6px hsl(92, 90%, 68%);
+        }
+    }
+
+    @keyframes animated-low-battery {
+        0% {
+            text-shadow: none;
+        }
+        100% {
+            text-shadow: 0 0 8px hsl(7, 89%, 46%);
+        }
+    }
+
+    /* Liquid battery with gradient color */
+    .gradient-color-red,
+    .gradient-color-red::after {
+        background: var(--gradient-color-red);
+    }
+
+    .gradient-color-orange,
+    .gradient-color-orange::after {
+        background: var(--gradient-color-orange);
+    }
+
+    .gradient-color-yellow,
+    .gradient-color-yellow::after {
+        background: var(--gradient-color-yellow);
+    }
+
+    .gradient-color-green,
+    .gradient-color-green::after {
+        background: var(--gradient-color-green);
+    }
+
+    /*=============== BREAKPOINTS ===============*/
+    /* For small devices */
+    @media screen and (max-width: 320px) {
+        .battery__card {
+            zoom: .8;
+        }
+    }
+
+    /* For medium devices */
+    @media screen and (min-width: 430px) {
+        .battery__card {
+            width: 312px;
+        }
+    }
+
+    /* For large devices */
+    @media screen and (min-width: 1024px) {
+        .battery__card {
+            zoom: 1.5;
+        }
+    }
+
+    /* Input field */
+    .input-container {
+        display: inline-block; /* Ensure each container appears on the same line */
+        margin-right: 20px; /* Adjust as needed */
+    }
+
+    /* Input fields */
+    #chargeInput1,
+    #chargeInput2,
+    #chargeInput3 {
+        padding: 10px 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    /* Button */
+    button {
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    /* Button hover effect */
+    button:hover {
+        background-color: #45a049;
+    }
+
+    /* Button focus effect */
+    button:focus {
+        outline: none;
+    }
+</style>
+<body>
+
+    <!--=============== BATTERY 1 ===============-->
+    <section class="battery">
+        <div class="battery__card">
+            <div class="battery__data">
+                <p class="battery__text">PADDY</p>
+                <h1 class="battery__percentage">
+                    20%
+                </h1>
+                <p class="battery__status">
+                    Low Quantity
+                </p>
+            </div>
+
+            <div class="battery__pill">
+                <div class="battery__level">
+                    <div class="battery__liquid"></div>
+                </div>
+            </div>
+        </div>
+        <div class="input-container">
+            <input type="number" id="chargeInput1" placeholder="Enter charge to add">
+            <button onclick="addCharge1()">Add</button>
+        </div>
+    </section>
+
+    <!--=============== BATTERY 2 ===============-->
+    <section class="battery">
+        <div class="battery__card">
+            <div class="battery__data">
+                <p class="battery__text">BARLEY</p>
+                <h1 class="battery__percentage">
+                    50%
+                </h1>
+                <p class="battery__status">
+                    Medium Quantity
+                </p>
+            </div>
+
+            <div class="battery__pill">
+                <div class="battery__level">
+                    <div class="battery__liquid"></div>
+                </div>
+            </div>
+        </div>
+        <div class="input-container">
+            <input type="number" id="chargeInput2" placeholder="Enter charge to add">
+            <button onclick="addCharge2()">Add</button>
+        </div>
+    </section>
+
+    <!--=============== BATTERY 3 ===============-->
+    <section class="battery">
+        <div class="battery__card">
+            <div class="battery__data">
+                <p class="battery__text">WHEAT</p>
+                <h1 class="battery__percentage">
+                    75%
+                </h1>
+                <p class="battery__status">
+                    High Quantity
+                </p>
+            </div>
+
+            <div class="battery__pill">
+                <div class="battery__level">
+                    <div class="battery__liquid"></div>
+                </div>
+            </div>
+        </div>
+        <div class="input-container">
+            <input type="number" id="chargeInput3" placeholder="Enter charge to add">
+            <button onclick="addCharge3()">Add</button>
+        </div>
+    </section>
+
+    <script>
+        let batteryLevels = [20, 50, 75];
+
+        function updateBatteryDisplay(index) {
+            const percentageDisplay = document.querySelectorAll('.battery__percentage')[index];
+            const statusDisplay = document.querySelectorAll('.battery__status')[index];
+            const liquidDisplay = document.querySelectorAll('.battery__liquid')[index];
+
+            percentageDisplay.textContent = batteryLevels[index] + '%';
+
+            if (batteryLevels[index] <= 20) {
+                statusDisplay.textContent = 'Low Quantity';
+                liquidDisplay.className = 'battery__liquid animated-red gradient-color-red';
+            } else if (batteryLevels[index] <= 50) {
+                statusDisplay.textContent = 'Medium Quantity';
+                liquidDisplay.className = 'battery__liquid gradient-color-orange';
+            } else if (batteryLevels[index] <= 75) {
+                statusDisplay.textContent = 'High Quantity';
+                liquidDisplay.className = 'battery__liquid gradient-color-yellow';
+            } else {
+                statusDisplay.textContent = 'Full';
+                liquidDisplay.className = 'battery__liquid animated-green gradient-color-green';
+            }
+
+            // Update liquid height based on battery level
+            liquidDisplay.style.height = (batteryLevels[index] / 100 * 180) + 'px';
+        }
+
+        function addCharge1() {
+            const chargeInput = document.getElementById('chargeInput1');
+            const chargeValue = parseInt(chargeInput.value) || 0;
+            batteryLevels[0] = Math.min(100, batteryLevels[0] + chargeValue);
+            updateBatteryDisplay(0);
+            chargeInput.value = '';
+        }
+
+        function addCharge2() {
+            const chargeInput = document.getElementById('chargeInput2');
+            const chargeValue = parseInt(chargeInput.value) || 0;
+            batteryLevels[1] = Math.min(100, batteryLevels[1] + chargeValue);
+            updateBatteryDisplay(1);
+            chargeInput.value = '';
+        }
+
+        function addCharge3() {
+            const chargeInput = document.getElementById('chargeInput3');
+            const chargeValue = parseInt(chargeInput.value) || 0;
+            batteryLevels[2] = Math.min(100, batteryLevels[2] + chargeValue);
+            updateBatteryDisplay(2);
+            chargeInput.value = '';
+        }
+
+        // Initial display update
+        for (let i = 0; i < batteryLevels.length; i++) {
+            updateBatteryDisplay(i);
+        }
+    </script>
+</body>
+</html>
